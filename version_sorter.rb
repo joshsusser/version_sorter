@@ -14,7 +14,7 @@ private
 
   def normalize(version)
     version.scan(/(\d+)|([^\d\.-]+)/).map {|n, x|
-      n ? [n.to_i, n] : [1.0/0.0, x]}
+      n ? [n.to_i] : [1.0/0.0, x]}
   end
 
 end
