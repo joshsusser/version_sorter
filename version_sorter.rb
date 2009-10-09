@@ -2,43 +2,23 @@
 module VersionSorter
   extend self
 
+  INF = 1.0/0.0
+
   def sort(list)
-    list.sort { |a, b| versioncmp(a, b) }
+    list.sort_by {|x| normalize(x)}
   end
 
   def rsort(list)
-    list.sort { |a, b| -versioncmp(a, b) }
+    list.sort_by {|x| normalize(x)}.reverse
   end
 
 private
-  def versioncmp(version_a, version_b)
-    vre = /[-.]|\d+|[^-.\d]+/
-    ax = version_a.scan(vre)
-    bx = version_b.scan(vre)
 
-    while ax.length > 0 && bx.length > 0
-      a = ax.shift
-      b = bx.shift
-
-      if( a == b )                 then next
-      elsif (a == '-' && b == '-') then next
-      elsif (a == '-')             then return -1
-      elsif (b == '-')             then return 1
-      elsif (a == '.' && b == '.') then next
-      elsif (a == '.' )            then return -1
-      elsif (b == '.' )            then return 1
-      elsif (a =~ /^\d+$/ && b =~ /^\d+$/) then
-        if( a =~ /^0/ or b =~ /^0/ ) then
-          return a.to_s.upcase <=> b.to_s.upcase
-        end
-        return a.to_i <=> b.to_i
-      else
-        return a.upcase <=> b.upcase
-      end
-    end
-
-    version_a <=> version_b
+  def normalize(version)
+    version.scan(/[\.-]|(\d+)|([^\d\.-]+)/).map {|n, x|
+      n ? [n.to_i, n] : [INF, x.to_s]}
   end
+
 end
 
 puts
