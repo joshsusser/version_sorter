@@ -43,7 +43,7 @@ if $0 == __FILE__
   end
 
   require 'benchmark'
-  versions = IO.read('tags.txt').split("\n")
+  versions = ARGF.read.split("\n")
   count = 10
   Benchmark.bm(20) do |x|
     x.report("sort")             { count.times { VersionSorter.sort(versions) } }
