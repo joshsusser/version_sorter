@@ -15,7 +15,7 @@ module VersionSorter
 private
 
   def normalize(version)
-    version.scan(/[\.-]|(\d+)|([^\d\.-]+)/).map {|n, x|
+    version.scan(/(\d+)|([^\d\.-]+)/).map {|n, x|
       n ? [n.to_i, n] : [INF, x.to_s]}
   end
 
