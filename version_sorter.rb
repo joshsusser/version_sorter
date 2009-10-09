@@ -2,8 +2,6 @@
 module VersionSorter
   extend self
 
-  INF = 1.0/0.0
-
   def sort(list)
     list.sort_by {|x| normalize(x)}
   end
@@ -16,7 +14,7 @@ private
 
   def normalize(version)
     version.scan(/(\d+)|([^\d\.-]+)/).map {|n, x|
-      n ? [n.to_i, n] : [INF, x.to_s]}
+      n ? [n.to_i, n] : [1.0/0.0, x]}
   end
 
 end
