@@ -3,18 +3,29 @@ module VersionSorter
   extend self
 
   def sort(list)
+    @version_numbers ||= {}
+    @version_strings ||= {}
+    @infinity = 1.0/0.0
     list.sort_by {|x| normalize(x)}
   end
 
   def rsort(list)
-    list.sort_by {|x| normalize(x)}.reverse
+    sort(list).reverse
   end
 
 private
 
   def normalize(version)
-    version.scan(/(\d+)|([^\d\.-]+)/).map {|n, x|
-      n ? [n.to_i] : [1.0/0.0, x]}
+    version.scan(/(\d+)|([a-z]+)/i).map {|n, s| n ? normal_number(n) : normal_string(s)}
+  end
+
+  def normal_number(n)
+    n = n.to_i
+    @version_numbers[n] || (@version_numbers[n] = [n])
+  end
+
+  def normal_string(s)
+    @version_strings[s] || (@version_strings[s] = [@infinity, s])
   end
 
 end
@@ -47,6 +58,7 @@ if $0 == __FILE__
   count = 10
   Benchmark.bm(20) do |x|
     x.report("sort")             { count.times { VersionSorter.sort(versions) } }
+    x.report("reverse")          { count.times { VersionSorter.rsort(versions) } }
   end
   puts
 
